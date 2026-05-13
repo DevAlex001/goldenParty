@@ -140,17 +140,17 @@ function GuestFlipCard({ guest, staggerIndex }: { guest: Guest; staggerIndex: nu
         aria-expanded={flipped}
         aria-label={
           flipped
-            ? `Mostrando el nombre completo ${guest.name}. Presiona para mostrar el apodo.`
-            : `Apodo ${guest.nick}. Presiona para mostrar el nombre completo.`
+            ? `Mostrando el nombre completo ${guest.name}. Presiona para mostrar el Nick.`
+            : `Nick ${guest.nick}. Presiona para mostrar el nombre completo.`
         }
         onClick={() => setFlipped((v) => !v)}
       >
         <div className={`flip-inner${flipped ? ' is-flipped' : ''}`}>
           <div className="flip-face flip-front">
-            <span className="flip-text">{guest.name}</span>
+            <span className="flip-text">{guest.nick}</span>
           </div>
           <div className="flip-face flip-back">
-            <span className="flip-text">{guest.nick}</span>
+            <span className="flip-text">{guest.name}</span>
           </div>
         </div>
       </button>
@@ -356,7 +356,7 @@ export default function App() {
                   />
                 </label>
                 <label className="field">
-                  <span className="label">Apodo</span>
+                  <span className="label">Nick</span>
                   <input
                     className="input"
                     type="text"
