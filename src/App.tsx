@@ -303,7 +303,7 @@ export default function App() {
               {listLoading ? (
                 <p className="guests-empty guests-empty--pulse">Syncing the guest list…</p>
               ) : guests.length === 0 ? (
-                <p className="guests-empty">Be the first to RSVP below.</p>
+                <p className="guests-empty">Sé la primera persona en confirmar tu asistencia abajo.</p>
               ) : (
                 <ol className="guest-list">
                   {guests.map((g, i) => (
@@ -314,42 +314,41 @@ export default function App() {
             </section>
 
             <p className="subtitle">
-              An evening of music, friends, and champagne under warm lights — now with a little
-              extra sparkle.
+              Una noche de música, amigos y champagne bajo luces cálidas — ahora con un toque especial.
             </p>
 
-            <section className="details panel details--party" aria-label="Event details">
+            <section className="details panel details--party" aria-label="Detalles del evento">
               <div className="details-grid">
                 <div className="detail-chip">
-                  <h3>When</h3>
-                  <p>Saturday, June 14 · doors at 8pm</p>
+                  <h3>Cuándo</h3>
+                  <p>Sábado 14 de junio · puertas abiertas a las 8pm</p>
                 </div>
                 <div className="detail-chip">
-                  <h3>Where</h3>
+                  <h3>Dónde</h3>
                   <p>The Atrium, 120 River Lane</p>
                 </div>
                 <div className="detail-chip">
-                  <h3>Dress</h3>
-                  <p>Cocktail with a touch of gold</p>
+                  <h3>Código de vestimenta</h3>
+                  <p>Cóctel con un toque dorado</p>
                 </div>
               </div>
             </section>
 
             <section className="rsvp panel panel--rsvp" aria-labelledby="rsvp-heading">
-              <h2 id="rsvp-heading">RSVP</h2>
+              <h2 id="rsvp-heading">Confirmar asistencia</h2>
               <p className="rsvp-lead">
-                Your invitation is stored with your full name and the nickname shown on the list.
-                Everyone sees updates as soon as the server syncs.
+                Tu invitación se guarda con tu nombre completo y el apodo que se mostrará en la lista.<br />
+                Todos verán las actualizaciones en cuanto el servidor sincronice.
               </p>
               <form className="rsvp-form" onSubmit={handleSubmit}>
                 <label className="field">
-                  <span className="label">Full name</span>
+                  <span className="label">Nombre completo</span>
                   <input
                     className="input"
                     type="text"
                     name="name"
                     autoComplete="name"
-                    placeholder="e.g. Carlos Pérez"
+                    placeholder="ej. Carlos Pérez"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     maxLength={120}
@@ -357,13 +356,13 @@ export default function App() {
                   />
                 </label>
                 <label className="field">
-                  <span className="label">Nickname</span>
+                  <span className="label">Apodo</span>
                   <input
                     className="input"
                     type="text"
                     name="nick"
                     autoComplete="nickname"
-                    placeholder="e.g. Quispe Decente"
+                    placeholder="ej. Quispe Decente"
                     value={nick}
                     onChange={(e) => setNick(e.target.value)}
                     maxLength={120}
@@ -372,7 +371,7 @@ export default function App() {
                 </label>
                 {submitError ? <p className="form-error">{submitError}</p> : null}
                 <button className="submit" type="submit" disabled={submitting}>
-                  <span className="submit-label">{submitting ? 'Sending…' : 'Confirm invitation'}</span>
+                  <span className="submit-label">{submitting ? 'Enviando…' : 'Confirmar invitación'}</span>
                 </button>
               </form>
             </section>
