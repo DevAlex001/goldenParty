@@ -9,11 +9,7 @@ const DEFAULT_INVITE =
 const DEFAULT_LIST =
   'https://yb2kwwkcmqgi5silinakvvmp4y0xgggn.lambda-url.us-east-2.on.aws/'
 
-const env = import.meta.env as {
-  DEV: boolean
-  VITE_INVITE_API_URL?: string
-  VITE_LIST_API_URL?: string
-}
+
 
 function normalizeApiBase(url: string) {
   const t = url.trim()
@@ -28,17 +24,17 @@ function resolveApiUrl(
   if (typeof envValue === 'string' && envValue.trim().length > 0) {
     return normalizeApiBase(envValue)
   }
-  if (env.DEV) return devProxyPath
+  if (import.meta.env.DEV) return devProxyPath
   return normalizeApiBase(productionDefault)
 }
 
 const INVITE_API_URL = resolveApiUrl(
-  env.VITE_INVITE_API_URL,
+  import.meta.env.VITE_RSVP_URL,
   DEFAULT_INVITE,
   '/api/rsvp/',
 )
 
-const LIST_API_URL = resolveApiUrl(env.VITE_LIST_API_URL, DEFAULT_LIST, '/api/invites/')
+const LIST_API_URL = resolveApiUrl(import.meta.env.VITE_INVITES_URL, DEFAULT_LIST, '/api/invites/')
 
 type Guest = {
   id: string
@@ -286,7 +282,7 @@ export default function App() {
               <div className="visual-glow" aria-hidden />
               <img
                 className="host-photo"
-                src="/party-host.png"
+                src={import.meta.env.BASE_URL + 'party-host.png'}
                 width={800}
                 height={800}
                 alt="Host at the desk, warm golden lighting"
