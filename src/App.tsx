@@ -270,7 +270,7 @@ export default function App() {
       <div className="app-noise" aria-hidden />
       <div className="shell">
         <header className="hero hero--split">
-          <p className="eyebrow">You are invited</p>
+          <p className="eyebrow">Estas invitado a mi fiesta!!</p>
           <h1 className="title">
             <span className="title-shimmer">Golden Party</span>
           </h1>
@@ -295,9 +295,9 @@ export default function App() {
           <div className="split-main">
             <section className="guests panel" aria-labelledby="guests-heading">
               <div className="panel-glow" aria-hidden />
-              <h2 id="guests-heading">Who is coming</h2>
+              <h2 id="guests-heading">Quienes confirmaron?</h2>
               <p className="guests-lead">
-                Live list from the party API. Tap a card to flip between nickname and full name.
+                La lista se actualiza en vivo conforme tus amigos confirman su asistencia. Presiona sobre los nombres para ver los nicks y viceversa.
               </p>
               {listError ? <p className="list-banner">{listError}</p> : null}
               {listLoading ? (
@@ -321,15 +321,15 @@ export default function App() {
               <div className="details-grid">
                 <div className="detail-chip">
                   <h3>Cuándo</h3>
-                  <p>Sábado 14 de junio · puertas abiertas a las 8pm</p>
+                  <p>Sábado 20 de junio · puertas abiertas a las 6pm</p>
                 </div>
                 <div className="detail-chip">
                   <h3>Dónde</h3>
-                  <p>The Atrium, 120 River Lane</p>
+                  <p>En mi casa o discoteca a confirmar :v</p>
                 </div>
                 <div className="detail-chip">
                   <h3>Código de vestimenta</h3>
-                  <p>Cóctel con un toque dorado</p>
+                  <p>Ninguno, solo procura llegar temprano</p>
                 </div>
               </div>
             </section>
@@ -337,8 +337,8 @@ export default function App() {
             <section className="rsvp panel panel--rsvp" aria-labelledby="rsvp-heading">
               <h2 id="rsvp-heading">Confirmar asistencia</h2>
               <p className="rsvp-lead">
-                Tu invitación se guarda con tu nombre completo y el apodo que se mostrará en la lista.<br />
-                Todos verán las actualizaciones en cuanto el servidor sincronice.
+                Tu invitación se guarda con tu nombre completo y tu nick que se mostrará en la lista.<br />
+                Todos verán las actualizaciones.
               </p>
               <form className="rsvp-form" onSubmit={handleSubmit}>
                 <label className="field">
