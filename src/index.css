@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Source+Sans+3:wght@400;500;600&display=swap');
+
+:root {
+  --bg-deep: #0a0712;
+  --surface: rgba(22, 18, 35, 0.72);
+  --surface-solid: #161423;
+  --border: rgba(255, 200, 120, 0.22);
+  --text: #faf6ff;
+  --text-muted: #c4b8d8;
+  --text-faint: #7a6e92;
+  --gold: #f4c14a;
+  --gold-bright: #ffe566;
+  --gold-soft: #c98a2c;
+  --gold-muted: #e8b84a;
+  --magenta: #ff3cac;
+  --violet: #9b5cff;
+  --cyan: #2be4ff;
+  --radius: 14px;
+  --shadow-soft: 0 16px 48px rgba(0, 0, 0, 0.45);
+  --glow-gold: 0 0 28px rgba(244, 193, 74, 0.35);
+  --glow-violet: 0 0 36px rgba(155, 92, 255, 0.28);
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Source Sans 3', system-ui, sans-serif;
+
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--text);
+  background-color: var(--bg-deep);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100svh;
+  position: relative;
+}
+
+/* Slow-moving color wash behind the app */
+.app-aurora {
+  position: fixed;
+  inset: -20%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(closest-side at 20% 20%, rgba(255, 60, 172, 0.22), transparent 55%),
+    radial-gradient(closest-side at 80% 10%, rgba(43, 228, 255, 0.18), transparent 50%),
+    radial-gradient(closest-side at 70% 80%, rgba(155, 92, 255, 0.28), transparent 55%),
+    radial-gradient(closest-side at 15% 75%, rgba(244, 193, 74, 0.16), transparent 50%);
+  filter: blur(72px);
+  opacity: 0.85;
+  animation: aurora-shift 22s ease-in-out infinite alternate;
+}
+
+@keyframes aurora-shift {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  100% {
+    transform: translate(4%, -3%) rotate(8deg) scale(1.08);
+  }
+}
+
+.app-noise {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-aurora {
+    animation: none;
+    opacity: 0.55;
+  }
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+}
