@@ -9,9 +9,10 @@ const RSVP_LAMBDA =
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  // 1. Añadimos la base para GitHub Pages
+  base: '/goldenParty/', 
   server: {
     proxy: {
-      // Dev-only: browser talks to same origin, Vite forwards to Lambda (no CORS preflight pain).
       '/api/invites': {
         target: LIST_LAMBDA,
         changeOrigin: true,
@@ -26,4 +27,9 @@ export default defineConfig({
       },
     },
   },
+  // 2. Definimos variables globales para usar en el código
+  define: {
+    'process.env.VITE_INVITES_URL': JSON.stringify(LIST_LAMBDA),
+    'process.env.VITE_RSVP_URL': JSON.stringify(RSVP_LAMBDA),
+  }
 })
