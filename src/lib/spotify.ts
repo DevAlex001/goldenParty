@@ -30,7 +30,7 @@ type SpotifyPlaylistResponse = {
   next: string | null
 }
 
-function tokenEndpoint() {
+function tokenEndpoint(): string | null {
   const custom = import.meta.env.VITE_SPOTIFY_TOKEN_URL
   if (typeof custom === 'string' && custom.trim().length > 0) {
     return custom.trim()
@@ -48,27 +48,6 @@ export function parsePlaylistId(input: string): string | null {
   if (urlMatch) return urlMatch[1]
   if (/^[a-zA-Z0-9]+$/.test(trimmed)) return trimmed
   return null
-}
-
-/** Token embebido en el build de GitHub Actions (caduca ~1 hora). */
-function builtAccessToken(): string | null {
-  const t = import.meta.env.VITE_SPOTIFY_ACCESS_TOKEN
-  return typeof t === 'string' && t.trim().length > 0 ? t.trim() : null
-}
-
-async function getAccessToken(): Promise<string> {
-  const url = tokenEndpoint()
-  if (url) {
-    const res = await fetch(url, { method: 'POST' })
-    return parseTokenResponse(res)
-  }
-
-  const baked = builtAccessToken()
-  if (baked) return baked
-
-  throw new Error(
-    'Spotify no configurado en producción: agrega VITE_SPOTIFY_TOKEN_URL (Lambda) o los secrets SPOTIFY_CLIENT_ID y SPOTIFY_CLIENT_SECRET en GitHub Actions.',
-  )
 }
 
 async function parseTokenResponse(res: Response): Promise<string> {
@@ -92,11 +71,44 @@ async function parseTokenResponse(res: Response): Promise<string> {
       data.error_description ||
       data.error ||
       text ||
-      'No se pudo obtener el token de Spotify. ¿Tienes un archivo .env con Client ID y Secret?'
+      'No se pudo obtener el token de Spotify.'
     throw new Error(msg)
   }
   if (!data.access_token) throw new Error('Respuesta de token inválida.')
   return data.access_token
+}
+
+/** Pide un token nuevo en cada visita (no caduca como el del build). */
+export async function getAccessToken(): Promise<string> {
+  const url = tokenEndpoint()
+  if (!url) {
+    throw new Error(
+      'Falta la Lambda de Spotify: agrega el secret VITE_SPOTIFY_TOKEN_URL en GitHub (URL de la función que devuelve el token). No uses un token manual — caduca en 1 hora.',
+    )
+  }
+  const res = await fetch(url, { method: 'POST', cache: 'no-store' })
+  return parseTokenResponse(res)
+}
+
+function spotifyApiError(status: number, text: string): string {
+  if (status === 401) {
+    try {
+      const j = JSON.parse(text) as { error?: { message?: string } }
+      if (j.error?.message?.toLowerCase().includes('expired')) {
+        return 'El token de Spotify expiró. Despliega la Lambda de token y configura VITE_SPOTIFY_TOKEN_URL en GitHub (no embebas el token en el build).'
+      }
+    } catch {
+      /* ignore */
+    }
+    return 'Token de Spotify inválido o expirado. Revisa VITE_SPOTIFY_TOKEN_URL.'
+  }
+  if (status === 403) {
+    return 'La playlist debe ser pública.'
+  }
+  if (status === 404) {
+    return 'Playlist no encontrada. Revisa VITE_SPOTIFY_PLAYLIST_ID.'
+  }
+  return text || `Spotify API error (${status})`
 }
 
 function mapItem(item: SpotifyPlaylistItem): SpotifyTrack | null {
@@ -115,26 +127,28 @@ function mapItem(item: SpotifyPlaylistItem): SpotifyTrack | null {
 }
 
 export async function fetchPlaylistTracks(playlistId: string): Promise<SpotifyTrack[]> {
-  const token = await getAccessToken()
+  let token = await getAccessToken()
   const tracks: SpotifyTrack[] = []
   let url: string | null =
     `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=50&market=US&fields=items(track(id,name,preview_url,external_urls,artists(name),album(images(url,width,height)))),next`
 
   while (url) {
-    const res = await fetch(url, {
+    let res = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
+      cache: 'no-store',
     })
+
+    if (res.status === 401) {
+      token = await getAccessToken()
+      res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: 'no-store',
+      })
+    }
+
     if (!res.ok) {
       const text = await res.text()
-      let msg = text || `Spotify API error (${res.status})`
-      if (res.status === 403) {
-        msg =
-          'La playlist debe ser pública, o necesitas iniciar sesión con Spotify (playlist privada).'
-      }
-      if (res.status === 404) {
-        msg = 'Playlist no encontrada. Revisa VITE_SPOTIFY_PLAYLIST_ID en tu .env.'
-      }
-      throw new Error(msg)
+      throw new Error(spotifyApiError(res.status, text))
     }
     const data = (await res.json()) as SpotifyPlaylistResponse
     for (const item of data.items) {

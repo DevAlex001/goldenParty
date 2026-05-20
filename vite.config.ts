@@ -132,9 +132,6 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_SPOTIFY_TOKEN_URL': JSON.stringify(
         env.VITE_SPOTIFY_TOKEN_URL ?? '',
       ),
-      'import.meta.env.VITE_SPOTIFY_ACCESS_TOKEN': JSON.stringify(
-        env.VITE_SPOTIFY_ACCESS_TOKEN ?? '',
-      ),
     },
   }
 })

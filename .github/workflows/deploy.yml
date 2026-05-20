@@ -25,35 +25,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # SPOTIFY_CLIENT_* solo en CI (nunca van al bundle del navegador).
-      # Genera un access token para embeber en el build (~1h de validez).
-      - name: Obtain Spotify access token
-        id: spotify-token
-        env:
-          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
-          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-        run: |
-          if [ -z "$SPOTIFY_CLIENT_ID" ] || [ -z "$SPOTIFY_CLIENT_SECRET" ]; then
-            echo "SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET missing — skip baked token"
-            echo "access_token=" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          RESPONSE=$(curl -sS -X POST "https://accounts.spotify.com/api/token" \
-            -H "Content-Type: application/x-www-form-urlencoded" \
-            -u "$SPOTIFY_CLIENT_ID:$SPOTIFY_CLIENT_SECRET" \
-            -d "grant_type=client_credentials")
-          TOKEN=$(echo "$RESPONSE" | jq -r '.access_token // empty')
-          if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
-            echo "Failed to get Spotify token: $RESPONSE"
-            exit 1
-          fi
-          echo "access_token=$TOKEN" >> "$GITHUB_OUTPUT"
-
       - name: Build
         env:
           VITE_SPOTIFY_PLAYLIST_ID: ${{ secrets.VITE_SPOTIFY_PLAYLIST_ID }}
+          # URL de tu Lambda que devuelve access_token (ver lambda/spotify-token-handler.example.py)
           VITE_SPOTIFY_TOKEN_URL: ${{ secrets.VITE_SPOTIFY_TOKEN_URL }}
-          VITE_SPOTIFY_ACCESS_TOKEN: ${{ steps.spotify-token.outputs.access_token }}
         run: npm run build
 
       - name: Setup Pages
