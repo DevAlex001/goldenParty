@@ -59,11 +59,19 @@ async function getAccessToken(): Promise<string> {
   }
   const res = await fetch(url, { method: 'POST' })
   const text = await res.text()
-  let data: SpotifyTokenResponse & { error?: string; error_description?: string }
-  try {
-    data = text ? (JSON.parse(text) as SpotifyTokenResponse & { error?: string }) : {}
-  } catch {
-    data = {}
+  let data: Partial<SpotifyTokenResponse> & {
+    error?: string
+    error_description?: string
+  } = {}
+  if (text) {
+    try {
+      data = JSON.parse(text) as SpotifyTokenResponse & {
+        error?: string
+        error_description?: string
+      }
+    } catch {
+      data = {}
+    }
   }
   if (!res.ok) {
     const msg =
