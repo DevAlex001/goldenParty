@@ -1,0 +1,118 @@
+.comments h2 {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.35rem;
+  background: linear-gradient(90deg, var(--text), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.comments-lead {
+  margin: 0 0 1.1rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.comments .cta-open {
+  margin-bottom: 1.15rem;
+}
+
+.cta-open--comments::before {
+  background: linear-gradient(
+    120deg,
+    #fff2a8,
+    var(--cyan),
+    #ff7bc5,
+    var(--violet),
+    var(--gold-bright)
+  );
+  background-size: 260% 260%;
+  animation: btn-sheen 4.5s linear infinite;
+}
+
+.panel--comments {
+  border-color: rgba(43, 228, 255, 0.35);
+  box-shadow: var(--shadow-soft), 0 0 32px rgba(43, 228, 255, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+}
+
+.modal.panel--comments h2 {
+  background: linear-gradient(90deg, var(--text), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.comments-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.input--area {
+  resize: vertical;
+  min-height: 4.5rem;
+  font-family: inherit;
+  line-height: 1.45;
+}
+
+.submit--comments {
+  align-self: flex-start;
+}
+
+.comments-empty {
+  margin: 0;
+  padding: 1rem;
+  border-radius: var(--radius);
+  border: 1px dashed rgba(43, 228, 255, 0.35);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.comments-empty--pulse {
+  animation: pulse-border 1.4s ease-in-out infinite;
+}
+
+.comment-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  max-height: 14rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.comment-card {
+  margin: 0;
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(43, 228, 255, 0.15);
+  text-align: left;
+}
+
+.comment-author {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold-muted);
+  margin-bottom: 0.3rem;
+}
+
+.comment-text {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--text);
+  word-break: break-word;
+}

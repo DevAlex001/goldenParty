@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { CSSProperties, FormEvent } from 'react'
+import CommentsSection from './components/CommentsSection'
+import SpotifyPlaylist from './components/SpotifyPlaylist'
+import type { SpotifyTrack } from './lib/spotify'
 import './App.css'
 
 const STORAGE_KEY = 'golden-party:guests'
@@ -129,7 +132,7 @@ async function fetchInvites(): Promise<Guest[]> {
 function GuestFlipCard({ guest, staggerIndex }: { guest: Guest; staggerIndex: number }) {
   const [flipped, setFlipped] = useState(false)
   const style = {
-    '--stagger': String(Math.min(staggerIndex, 18)),
+    '--stagger': String(Math.min(staggerIndex, 12)),
   } as CSSProperties
 
   return (
@@ -166,6 +169,8 @@ export default function App() {
   const [listError, setListError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [rsvpOpen, setRsvpOpen] = useState(false)
+  const [activeTrack, setActiveTrack] = useState<SpotifyTrack | null>(null)
 
   const refreshGuests = useCallback(async () => {
     const next = await fetchInvites()
@@ -203,6 +208,25 @@ export default function App() {
     if (listLoading) return
     saveGuests(guests)
   }, [guests, listLoading])
+
+  useEffect(() => {
+    if (!rsvpOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setRsvpOpen(false)
+    }
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [rsvpOpen])
+
+  function closeRsvp() {
+    if (submitting) return
+    setRsvpOpen(false)
+    setSubmitError(null)
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -248,8 +272,9 @@ export default function App() {
     try {
       await refreshGuests()
       setListError(null)
+      setRsvpOpen(false)
     } catch {
-      setListError('You are registered, but the live list could not be refreshed. Try reloading.')
+      setListError('Te registramos, pero no pudimos actualizar la lista. Recarga la página.')
       setGuests((prev) => [
         {
           id: crypto.randomUUID(),
@@ -259,25 +284,37 @@ export default function App() {
         },
         ...prev,
       ])
+      setRsvpOpen(false)
     }
 
     setSubmitting(false)
   }
 
   return (
-    <div className="page-wrap">
+    <div className={`page-wrap${activeTrack ? ' page-wrap--track' : ''}`}>
+      {activeTrack ? (
+        <div className="album-backdrop" aria-hidden>
+          <img
+            className="album-backdrop__img"
+            src={activeTrack.albumArtUrl}
+            alt=""
+            decoding="async"
+          />
+          <div className="album-backdrop__shade" />
+        </div>
+      ) : null}
       <div className="app-aurora" aria-hidden />
       <div className="app-noise" aria-hidden />
       <div className="shell">
-        <header className="hero hero--split">
-          <p className="eyebrow">Estas invitado a mi fiesta!!</p>
-          <h1 className="title">
-            <span className="title-shimmer">Golden Party</span>
-          </h1>
-        </header>
+        <div className="page-flow">
+          <header className="hero page-block">
+            <p className="eyebrow">Estas invitado a mi fiesta!!</p>
+            <h1 className="title">
+              <span className="title-shimmer">Golden Party</span>
+            </h1>
+          </header>
 
-        <div className="split">
-          <aside className="split-visual">
+          <div className="hero-visual page-block">
             <div className="visual-frame">
               <div className="visual-glow" aria-hidden />
               <img
@@ -290,94 +327,133 @@ export default function App() {
                 decoding="async"
               />
             </div>
-          </aside>
+          </div>
 
-          <div className="split-main">
-            <section className="guests panel" aria-labelledby="guests-heading">
-              <div className="panel-glow" aria-hidden />
-              <h2 id="guests-heading">Quienes confirmaron?</h2>
-              <p className="guests-lead">
-                La lista se actualiza en vivo conforme tus amigos confirman su asistencia. Presiona sobre los nombres para ver los nicks y viceversa.
-              </p>
-              {listError ? <p className="list-banner">{listError}</p> : null}
-              {listLoading ? (
-                <p className="guests-empty guests-empty--pulse">Syncing the guest list…</p>
-              ) : guests.length === 0 ? (
-                <p className="guests-empty">Sé la primera persona en confirmar tu asistencia abajo.</p>
-              ) : (
-                <ol className="guest-list">
-                  {guests.map((g, i) => (
-                    <GuestFlipCard key={g.id} guest={g} staggerIndex={i} />
-                  ))}
-                </ol>
-              )}
-            </section>
-
+          <section className="intro panel page-block" aria-label="Detalles del evento">
             <p className="subtitle">
               Una noche de música, amigos y champagne bajo luces cálidas — ahora con un toque especial.
             </p>
-
-            <section className="details panel details--party" aria-label="Detalles del evento">
-              <div className="details-grid">
-                <div className="detail-chip">
-                  <h3>Cuándo</h3>
-                  <p>Sábado 20 de junio · puertas abiertas a las 6pm</p>
-                </div>
-                <div className="detail-chip">
-                  <h3>Dónde</h3>
-                  <p>En mi casa o discoteca a confirmar :v</p>
-                </div>
-                <div className="detail-chip">
-                  <h3>Código de vestimenta</h3>
-                  <p>Ninguno, solo procura llegar temprano</p>
-                </div>
+            <div className="details-grid details-grid--intro">
+              <div className="detail-chip">
+                <h3>Cuándo</h3>
+                <p>Sábado 20 de junio · puertas abiertas a las 6pm</p>
               </div>
-            </section>
+              <div className="detail-chip">
+                <h3>Dónde</h3>
+                <p>En mi casa o discoteca a confirmar :v</p>
+              </div>
+              <div className="detail-chip">
+                <h3>Código de vestimenta</h3>
+                <p>Ninguno, solo procura llegar temprano</p>
+              </div>
+            </div>
+            <button type="button" className="cta-open" onClick={() => setRsvpOpen(true)}>
+              <span className="cta-open-label">Confirmar invitación</span>
+            </button>
+          </section>
 
-            <section className="rsvp panel panel--rsvp" aria-labelledby="rsvp-heading">
-              <h2 id="rsvp-heading">Confirmar asistencia</h2>
-              <p className="rsvp-lead">
-                Tu invitación se guarda con tu nombre completo y tu nick que se mostrará en la lista.<br />
-                Todos verán las actualizaciones.
-              </p>
-              <form className="rsvp-form" onSubmit={handleSubmit}>
-                <label className="field">
-                  <span className="label">Nombre completo</span>
-                  <input
-                    className="input"
-                    type="text"
-                    name="name"
-                    autoComplete="name"
-                    placeholder="ej. Carlos Pérez"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    maxLength={120}
-                    required
-                  />
-                </label>
-                <label className="field">
-                  <span className="label">Nick</span>
-                  <input
-                    className="input"
-                    type="text"
-                    name="nick"
-                    autoComplete="nickname"
-                    placeholder="ej. Quispe Decente"
-                    value={nick}
-                    onChange={(e) => setNick(e.target.value)}
-                    maxLength={120}
-                    required
-                  />
-                </label>
-                {submitError ? <p className="form-error">{submitError}</p> : null}
-                <button className="submit" type="submit" disabled={submitting}>
-                  <span className="submit-label">{submitting ? 'Enviando…' : 'Confirmar invitación'}</span>
-                </button>
-              </form>
-            </section>
-          </div>
+          <SpotifyPlaylist
+            activeTrackId={activeTrack?.id ?? null}
+            onSelectTrack={setActiveTrack}
+          />
+
+          <CommentsSection />
+
+          <section
+            className="guests panel guests--compact page-block"
+            aria-labelledby="guests-heading"
+          >
+          <div className="panel-glow" aria-hidden />
+          <h2 id="guests-heading">Quienes confirmaron?</h2>
+          <p className="guests-lead">
+            Lista en vivo. Toca un nombre para ver nick o nombre completo.
+          </p>
+          {listError ? <p className="list-banner">{listError}</p> : null}
+          {listLoading ? (
+            <p className="guests-empty guests-empty--pulse">Sincronizando la lista…</p>
+          ) : guests.length === 0 ? (
+            <p className="guests-empty">Sé la primera persona en confirmar tu invitación.</p>
+          ) : (
+            <div className="guest-list-scroll">
+              <ol className="guest-list">
+                {guests.map((g, i) => (
+                  <GuestFlipCard key={g.id} guest={g} staggerIndex={i} />
+                ))}
+              </ol>
+            </div>
+          )}
+          </section>
         </div>
       </div>
+
+      {rsvpOpen ? (
+        <div
+          className="modal-root"
+          role="presentation"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeRsvp()
+          }}
+        >
+          <div
+            className="modal panel panel--rsvp"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="rsvp-heading"
+          >
+            <button
+              type="button"
+              className="modal-close"
+              aria-label="Cerrar"
+              onClick={closeRsvp}
+              disabled={submitting}
+            >
+              ×
+            </button>
+            <h2 id="rsvp-heading">Confirmar asistencia</h2>
+            <p className="rsvp-lead">
+              Tu invitación se guarda con tu nombre completo y tu nick que se mostrará en la lista.
+              Todos verán las actualizaciones.
+            </p>
+            <form className="rsvp-form" onSubmit={handleSubmit}>
+              <label className="field">
+                <span className="label">Nombre completo</span>
+                <input
+                  className="input"
+                  type="text"
+                  name="name"
+                  autoComplete="name"
+                  placeholder="ej. Carlos Pérez"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  maxLength={120}
+                  required
+                  autoFocus
+                />
+              </label>
+              <label className="field">
+                <span className="label">Nick</span>
+                <input
+                  className="input"
+                  type="text"
+                  name="nick"
+                  autoComplete="nickname"
+                  placeholder="ej. Quispe Decente"
+                  value={nick}
+                  onChange={(e) => setNick(e.target.value)}
+                  maxLength={120}
+                  required
+                />
+              </label>
+              {submitError ? <p className="form-error">{submitError}</p> : null}
+              <button className="submit" type="submit" disabled={submitting}>
+                <span className="submit-label">
+                  {submitting ? 'Enviando…' : 'Confirmar asistencia'}
+                </span>
+              </button>
+            </form>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }
