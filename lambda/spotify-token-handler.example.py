@@ -1,6 +1,7 @@
 """
 Lambda opcional para producción (GitHub Pages).
-Configura en GitHub el secret: VITE_SPOTIFY_TOKEN_URL = URL de esta Lambda
+URL en producción: https://bbgyax7gc7d4tt7yhjtszjsjui0gsjgw.lambda-url.us-east-2.on.aws/
+Opcional en GitHub: secret VITE_SPOTIFY_TOKEN_URL (misma URL) para override
 
 Variables de entorno en la Lambda:
   SPOTIFY_CLIENT_ID

@@ -30,15 +30,32 @@ type SpotifyPlaylistResponse = {
   next: string | null
 }
 
-function tokenEndpoint(): string | null {
-  const custom = import.meta.env.VITE_SPOTIFY_TOKEN_URL
-  if (typeof custom === 'string' && custom.trim().length > 0) {
-    return custom.trim()
+const DEFAULT_SPOTIFY_TOKEN =
+  'https://bbgyax7gc7d4tt7yhjtszjsjui0gsjgw.lambda-url.us-east-2.on.aws/'
+
+function normalizeApiBase(url: string) {
+  const t = url.trim()
+  return t.endsWith('/') ? t : `${t}/`
+}
+
+function resolveApiUrl(
+  envValue: string | undefined,
+  productionDefault: string,
+  devProxyPath: string,
+) {
+  if (typeof envValue === 'string' && envValue.trim().length > 0) {
+    return normalizeApiBase(envValue)
   }
-  if (import.meta.env.DEV) {
-    return '/api/spotify/token'
-  }
-  return null
+  if (import.meta.env.DEV) return devProxyPath
+  return normalizeApiBase(productionDefault)
+}
+
+function tokenEndpoint(): string {
+  return resolveApiUrl(
+    import.meta.env.VITE_SPOTIFY_TOKEN_URL,
+    DEFAULT_SPOTIFY_TOKEN,
+    '/api/spotify/token',
+  )
 }
 
 export function parsePlaylistId(input: string): string | null {
@@ -80,13 +97,7 @@ async function parseTokenResponse(res: Response): Promise<string> {
 
 /** Pide un token nuevo en cada visita (no caduca como el del build). */
 export async function getAccessToken(): Promise<string> {
-  const url = tokenEndpoint()
-  if (!url) {
-    throw new Error(
-      'Falta la Lambda de Spotify: agrega el secret VITE_SPOTIFY_TOKEN_URL en GitHub (URL de la función que devuelve el token). No uses un token manual — caduca en 1 hora.',
-    )
-  }
-  const res = await fetch(url, { method: 'POST', cache: 'no-store' })
+  const res = await fetch(tokenEndpoint(), { method: 'POST', cache: 'no-store' })
   return parseTokenResponse(res)
 }
 

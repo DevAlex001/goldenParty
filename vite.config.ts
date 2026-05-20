@@ -11,6 +11,8 @@ const COMMENTS_POST_LAMBDA =
   'https://okzpybliflo6h2rxpakctwvtuy0gwazh.lambda-url.us-east-2.on.aws'
 const COMMENTS_LIST_LAMBDA =
   'https://ykc62g4w4cqsb3uwntucodncym0ejhbt.lambda-url.us-east-2.on.aws'
+const SPOTIFY_TOKEN_LAMBDA =
+  'https://bbgyax7gc7d4tt7yhjtszjsjui0gsjgw.lambda-url.us-east-2.on.aws'
 
 /** Parse KEY=value lines from a dotenv file (no quotes expansion). */
 function parseEnvFile(filePath: string): Record<string, string> {
@@ -130,7 +132,7 @@ export default defineConfig(({ mode }) => {
         env.VITE_SPOTIFY_PLAYLIST_ID ?? '',
       ),
       'import.meta.env.VITE_SPOTIFY_TOKEN_URL': JSON.stringify(
-        env.VITE_SPOTIFY_TOKEN_URL ?? '',
+        env.VITE_SPOTIFY_TOKEN_URL ?? SPOTIFY_TOKEN_LAMBDA,
       ),
     },
   }
