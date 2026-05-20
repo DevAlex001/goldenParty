@@ -50,14 +50,28 @@ export function parsePlaylistId(input: string): string | null {
   return null
 }
 
+/** Token embebido en el build de GitHub Actions (caduca ~1 hora). */
+function builtAccessToken(): string | null {
+  const t = import.meta.env.VITE_SPOTIFY_ACCESS_TOKEN
+  return typeof t === 'string' && t.trim().length > 0 ? t.trim() : null
+}
+
 async function getAccessToken(): Promise<string> {
   const url = tokenEndpoint()
-  if (!url) {
-    throw new Error(
-      'Spotify token no configurado. Usa npm run dev con .env o define VITE_SPOTIFY_TOKEN_URL.',
-    )
+  if (url) {
+    const res = await fetch(url, { method: 'POST' })
+    return parseTokenResponse(res)
   }
-  const res = await fetch(url, { method: 'POST' })
+
+  const baked = builtAccessToken()
+  if (baked) return baked
+
+  throw new Error(
+    'Spotify no configurado en producción: agrega VITE_SPOTIFY_TOKEN_URL (Lambda) o los secrets SPOTIFY_CLIENT_ID y SPOTIFY_CLIENT_SECRET en GitHub Actions.',
+  )
+}
+
+async function parseTokenResponse(res: Response): Promise<string> {
   const text = await res.text()
   let data: Partial<SpotifyTokenResponse> & {
     error?: string
