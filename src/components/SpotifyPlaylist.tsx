@@ -21,6 +21,7 @@ export default function SpotifyPlaylist({ onSelectTrack, activeTrackId }: Props)
   const [error, setError] = useState<string | null>(null)
   const [playStatus, setPlayStatus] = useState<string | null>(null)
   const [previewLoading, setPreviewLoading] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
@@ -56,9 +57,20 @@ export default function SpotifyPlaylist({ onSelectTrack, activeTrackId }: Props)
   }, [])
 
   async function handleSelect(track: SpotifyTrack) {
+    // If the same track is playing, stop it
+    if (activeTrackId === track.id && isPlaying) {
+      audioRef.current?.pause()
+      audioRef.current = null
+      setIsPlaying(false)
+      setPlayStatus(null)
+      return
+    }
+
     onSelectTrack(track)
     setPlayStatus(null)
+    setIsPlaying(false)
     audioRef.current?.pause()
+    audioRef.current = null
 
     setPreviewLoading(true)
     const preview = await resolvePreviewUrl(track)
@@ -75,10 +87,12 @@ export default function SpotifyPlaylist({ onSelectTrack, activeTrackId }: Props)
 
     audio.addEventListener('ended', () => {
       setPlayStatus(null)
+      setIsPlaying(false)
     })
 
     try {
       await audio.play()
+      setIsPlaying(true)
       setPlayStatus(`Reproduciendo preview · ${track.name}`)
     } catch {
       setPlayStatus('El navegador bloqueó el audio. Toca otra vez la canción.')
@@ -111,14 +125,18 @@ export default function SpotifyPlaylist({ onSelectTrack, activeTrackId }: Props)
             <li key={track.id}>
               <button
                 type="button"
-                className={`track-btn${activeTrackId === track.id ? ' is-active' : ''}`}
+                className={`track-btn${activeTrackId === track.id ? ' is-active' : ''}${activeTrackId === track.id && isPlaying ? ' is-playing' : ''}`}
                 onClick={() => void handleSelect(track)}
+                aria-label={activeTrackId === track.id && isPlaying ? `Detener ${track.name}` : `Reproducir ${track.name}`}
               >
                 <img src={track.albumArtUrl} alt="" className="track-thumb" width={40} height={40} />
                 <span className="track-meta">
                   <span className="track-name">{track.name}</span>
                   <span className="track-artist">{track.artist}</span>
                 </span>
+                {activeTrackId === track.id && isPlaying ? (
+                  <span className="track-stop-icon" aria-hidden>⏹</span>
+                ) : null}
               </button>
             </li>
           ))}
