@@ -310,7 +310,7 @@ export default function App() {
           <header className="hero page-block">
             <p className="eyebrow">Estas invitado a mi fiesta!!</p>
             <h1 className="title">
-              <span className="title-shimmer">Golden Party</span>
+              <span className="title-shimmer">Golden Partyson</span>
             </h1>
           </header>
 
@@ -331,20 +331,25 @@ export default function App() {
 
           <section className="intro panel page-block" aria-label="Detalles del evento">
             <p className="subtitle">
-              Una noche de música, amigos y champagne bajo luces cálidas — ahora con un toque especial.
+              Una tarde para celebrar la vida, la amistad y un gran logro en la nube — acompáñame a festejar mi cumpleaños y la obtención de mi AWS Golden Jacket bajo luces cálidas.
             </p>
             <div className="details-grid details-grid--intro">
               <div className="detail-chip">
                 <h3>Cuándo</h3>
-                <p>Sábado 20 de junio · puertas abiertas a las 6pm</p>
+                <p>Sábado 20 de Junio · puertas abiertas desde las 3 pm</p>
               </div>
               <div className="detail-chip">
                 <h3>Dónde</h3>
-                <p>En mi casa o discoteca a confirmar :v</p>
-              </div>
-              <div className="detail-chip">
-                <h3>Código de vestimenta</h3>
-                <p>Ninguno, solo procura llegar temprano</p>
+                <p>Sera en mi casa, Barrio Petrolero, Calle #15 Nro. 1769</p>
+                  <a 
+                    href="https://maps.app.goo.gl/v8sNYCEC1uyQnxaL7" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center px-6 py-2.5 mt-4 text-sm font-medium text-white bg-amber-400 hover:bg-amber-500 rounded-full shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+                    style={{ color: '#ffffff' }}
+                  >
+                    Ver ubicación en Maps
+                  </a>
               </div>
             </div>
             <button type="button" className="cta-open" onClick={() => setRsvpOpen(true)}>

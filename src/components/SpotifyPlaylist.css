@@ -82,6 +82,18 @@
   box-shadow: 0 0 20px rgba(30, 215, 96, 0.15);
 }
 
+.track-btn.is-playing {
+  border-color: rgba(30, 215, 96, 0.8);
+  box-shadow: 0 0 28px rgba(30, 215, 96, 0.3);
+}
+
+.track-stop-icon {
+  margin-left: auto;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
 .track-thumb {
   width: 2.5rem;
   height: 2.5rem;
