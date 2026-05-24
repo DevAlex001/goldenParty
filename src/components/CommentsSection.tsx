@@ -87,7 +87,7 @@ export default function CommentsSection() {
       <section className="comments panel page-block" aria-labelledby="comments-heading">
         <div className="panel-glow" aria-hidden />
         <h2 id="comments-heading">Comentarios</h2>
-        <p className="comments-lead">Mensajes de la fiesta, actualizados en vivo.</p>
+        <p className="comments-lead">Puedes dejar un comentario.</p>
 
         <button type="button" className="cta-open cta-open--comments" onClick={() => setFormOpen(true)}>
           <span className="cta-open-label">Escribir</span>

@@ -331,16 +331,16 @@ export default function App() {
 
           <section className="intro panel page-block" aria-label="Detalles del evento">
             <p className="subtitle">
-              Una tarde para celebrar la vida, la amistad y un gran logro en la nube — acompáñame a festejar mi cumpleaños y la obtención de mi AWS Golden Jacket bajo luces cálidas.
+              Una tarde para celebrar la vida, la amistad y un gran logro en la nube — acompáñame a festejar mi cumpleaños y la obtención de mi AWS Golden Jacket.
             </p>
             <div className="details-grid details-grid--intro">
               <div className="detail-chip">
                 <h3>Cuándo</h3>
-                <p>Sábado 20 de Junio · puertas abiertas desde las 3 pm</p>
+                <p>Sábado 20 de Junio (Gran Poder) · desde las 3 pm</p>
               </div>
               <div className="detail-chip">
                 <h3>Dónde</h3>
-                <p>Sera en mi casa, Barrio Petrolero, Calle #15 Nro. 1769</p>
+                <p>Sera en mi casa, Barrio Petrolero, Calle #15 Nro. 1762</p>
                   <a 
                     href="https://maps.app.goo.gl/v8sNYCEC1uyQnxaL7" 
                     target="_blank" 
@@ -353,7 +353,7 @@ export default function App() {
               </div>
             </div>
             <button type="button" className="cta-open" onClick={() => setRsvpOpen(true)}>
-              <span className="cta-open-label">Confirmar invitación</span>
+              <span className="cta-open-label">Confirmar Asistencia</span>
             </button>
           </section>
 
@@ -362,8 +362,6 @@ export default function App() {
             onSelectTrack={setActiveTrack}
           />
 
-          <CommentsSection />
-
           <section
             className="guests panel guests--compact page-block"
             aria-labelledby="guests-heading"
@@ -371,7 +369,7 @@ export default function App() {
           <div className="panel-glow" aria-hidden />
           <h2 id="guests-heading">Quienes confirmaron?</h2>
           <p className="guests-lead">
-            Lista en vivo. Toca un nombre para ver nick o nombre completo.
+            Toca un nombre para ver nick o nombre completo.
           </p>
           {listError ? <p className="list-banner">{listError}</p> : null}
           {listLoading ? (
@@ -388,6 +386,7 @@ export default function App() {
             </div>
           )}
           </section>
+          <CommentsSection />
         </div>
       </div>
 

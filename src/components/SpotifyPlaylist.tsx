@@ -114,7 +114,7 @@ export default function SpotifyPlaylist({ onSelectTrack, activeTrackId }: Props)
   return (
     <section className="spotify panel page-block" aria-label="Música de la fiesta">
       <h2>Música de la fiesta</h2>
-      <p className="spotify-hint">Toca una canción — el fondo cambia y suena un preview de ~30s.</p>
+      <p className="spotify-hint">Toca una canción para escucharla</p>
       {previewLoading ? <p className="spotify-status">Cargando audio…</p> : null}
       {playStatus ? <p className="spotify-now-playing">{playStatus}</p> : null}
       {loading ? <p className="spotify-status">Cargando playlist…</p> : null}
