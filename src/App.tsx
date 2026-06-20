@@ -377,13 +377,11 @@ export default function App() {
           ) : guests.length === 0 ? (
             <p className="guests-empty">Sé la primera persona en confirmar tu invitación.</p>
           ) : (
-            <div className="guest-list-scroll">
-              <ol className="guest-list">
-                {guests.map((g, i) => (
-                  <GuestFlipCard key={g.id} guest={g} staggerIndex={i} />
-                ))}
-              </ol>
-            </div>
+            <ol className="guest-list">
+              {guests.map((g, i) => (
+                <GuestFlipCard key={g.id} guest={g} staggerIndex={i} />
+              ))}
+            </ol>
           )}
           </section>
           <CommentsSection />
