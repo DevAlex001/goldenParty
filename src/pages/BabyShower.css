@@ -77,92 +77,12 @@
   font-weight: 700;
 }
 
-.bs-bear {
-  position: relative;
-  width: 110px;
-  height: 100px;
-  margin: 0.25rem 0;
-}
-
-.bs-bear-ear {
-  position: absolute;
-  top: -14px;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: #caa06e;
-}
-
-.bs-bear-ear--left {
-  left: 2px;
-}
-
-.bs-bear-ear--right {
-  right: 2px;
-}
-
-.bs-bear-face {
-  position: absolute;
-  inset: 8px;
-  border-radius: 50%;
-  background: #e9cda0;
-  box-shadow: 0 8px 18px rgba(122, 90, 58, 0.25);
-}
-
-.bs-bear-eye {
-  position: absolute;
-  top: 38px;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #5a4632;
-}
-
-.bs-bear-eye--left {
-  left: 28px;
-}
-
-.bs-bear-eye--right {
-  right: 28px;
-}
-
-.bs-bear-cheek {
-  position: absolute;
-  top: 50px;
-  width: 16px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgba(233, 158, 158, 0.55);
-}
-
-.bs-bear-cheek--left {
-  left: 14px;
-}
-
-.bs-bear-cheek--right {
-  right: 14px;
-}
-
-.bs-bear-snout {
-  position: absolute;
-  left: 50%;
-  top: 46px;
-  width: 34px;
-  height: 26px;
-  transform: translateX(-50%);
-  background: #fff6e8;
-  border-radius: 50%;
-}
-
-.bs-bear-nose {
-  position: absolute;
-  left: 50%;
-  top: 6px;
-  width: 9px;
-  height: 7px;
-  transform: translateX(-50%);
-  background: #5a4632;
-  border-radius: 50%;
+.bs-hero-img {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  border-radius: 28px;
+  box-shadow: 0 12px 28px rgba(154, 112, 184, 0.25);
 }
 
 .bs-panel {
@@ -230,6 +150,14 @@
   background: #b98ee0;
 }
 
+.bs-invite-line {
+  text-align: center;
+  margin: 0;
+  color: #6b4f8a;
+  font-size: 1.02rem;
+  line-height: 1.5;
+}
+
 .bs-rsvp-line,
 .bs-gift-line {
   text-align: center;
@@ -271,17 +199,25 @@
 .bs-whatsapp-btn {
   display: inline-block;
   padding: 0.65rem 1.4rem;
+  border: none;
   border-radius: 999px;
   background: #4caf7d;
   color: #fff;
   font-weight: 700;
+  font-size: 1rem;
   text-decoration: none;
+  cursor: pointer;
 }
 
-.bs-whatsapp-pending {
+.bs-whatsapp-btn:hover {
+  background: #419c6c;
+}
+
+.bs-whatsapp-hint {
   margin: 0;
   font-size: 0.9rem;
   color: #8a6fae;
+  text-align: center;
 }
 
 /* Decor: floating balloons + hearts */

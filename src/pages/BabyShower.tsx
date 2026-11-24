@@ -6,6 +6,7 @@ import './BabyShower.css'
 const STORAGE_KEY = 'baby-shower:rsvp'
 
 const MOM_NAME = 'Vania'
+const DAD_NAME = 'Alex'
 const EVENT_DATE = 'Sábado 12 de Diciembre'
 const EVENT_TIME = '4:00 pm'
 const EVENT_ADDRESS = 'Calle Guerrilleros Lanza, Edificio Tándem'
@@ -14,8 +15,11 @@ const RSVP_CONTACT_NAME = 'Vania'
 const RSVP_PHONE = '74089404'
 const GIFT_SUGGESTION = 'Pañales talla 1 o lo que gustes'
 
-// Se activa en cuanto Vania comparta el enlace del grupo.
-const WHATSAPP_GROUP_URL = ''
+const WHATSAPP_GROUP_URL = 'https://chat.whatsapp.com/LUPmBQAiInaBdatmunQdyQ?s=cl&p=a&iam=2'
+
+function buildWhatsappGreeting(name: string) {
+  return `Hola chicos, soy ${name} y estaré presente en el Baby Shower 🎉`
+}
 
 type Rsvp = {
   name: string
@@ -53,28 +57,11 @@ function FloatingDecor() {
   )
 }
 
-function BearMascot() {
-  return (
-    <div className="bs-bear" aria-hidden>
-      <div className="bs-bear-ear bs-bear-ear--left" />
-      <div className="bs-bear-ear bs-bear-ear--right" />
-      <div className="bs-bear-face">
-        <div className="bs-bear-eye bs-bear-eye--left" />
-        <div className="bs-bear-eye bs-bear-eye--right" />
-        <div className="bs-bear-snout">
-          <div className="bs-bear-nose" />
-        </div>
-        <div className="bs-bear-cheek bs-bear-cheek--left" />
-        <div className="bs-bear-cheek bs-bear-cheek--right" />
-      </div>
-    </div>
-  )
-}
-
 export default function BabyShower() {
   const [rsvp, setRsvp] = useState<Rsvp | null>(() => loadRsvp())
   const [formOpen, setFormOpen] = useState(false)
   const [name, setName] = useState('')
+  const [waCopied, setWaCopied] = useState(false)
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -87,23 +74,46 @@ export default function BabyShower() {
     setName('')
   }
 
+  async function handleJoinWhatsapp() {
+    if (!rsvp) return
+    try {
+      await navigator.clipboard.writeText(buildWhatsappGreeting(rsvp.name))
+      setWaCopied(true)
+    } catch {
+      setWaCopied(false)
+    }
+    window.open(WHATSAPP_GROUP_URL, '_blank', 'noopener,noreferrer')
+  }
+
   return (
     <div className="bs-page">
       <div className="bs-aurora" aria-hidden />
       <FloatingDecor />
       <div className="bs-shell">
         <Link to="/golden-party" className="bs-cross-link">
-          🎉 Ver invitación de Golden Party
+          🎉 Invitación anterior - Golden Partyson
         </Link>
 
         <header className="bs-hero">
           <div className="bs-cloud">Baby Shower</div>
-          <BearMascot />
-          <p className="bs-of">de {MOM_NAME}</p>
+          <img
+            className="bs-hero-img"
+            src={import.meta.env.BASE_URL + 'baby-shower-hero.png'}
+            width={1024}
+            height={1024}
+            alt="Ilustración de Baby Shower"
+            loading="eager"
+            decoding="async"
+          />
+          <p className="bs-of">{MOM_NAME} y {DAD_NAME}</p>
           <p className="bs-pill">♡ ¡Es una niña! ♡</p>
         </header>
 
         <section className="bs-panel" aria-label="Detalles del evento">
+          <p className="bs-invite-line">
+            Te invitamos a participar del baby shower de nuestra bebé. ¡Tu presencia hará
+            este día aún más especial! 💜
+          </p>
           <div className="bs-details-grid">
             <div className="bs-chip">
               <h3>Fecha</h3>
@@ -137,18 +147,16 @@ export default function BabyShower() {
               <p className="bs-confirmed-title">
                 ¡Gracias por confirmar, {rsvp.name}! 💜
               </p>
-              {WHATSAPP_GROUP_URL ? (
-                <a
-                  href={WHATSAPP_GROUP_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bs-whatsapp-btn"
-                >
-                  Únete al grupo de WhatsApp
-                </a>
+              <button type="button" className="bs-whatsapp-btn" onClick={handleJoinWhatsapp}>
+                Únete al grupo de WhatsApp
+              </button>
+              {waCopied ? (
+                <p className="bs-whatsapp-hint">
+                  ¡Copiamos tu saludo! Pégalo en el grupo apenas entres 💬
+                </p>
               ) : (
-                <p className="bs-whatsapp-pending">
-                  Pronto compartiremos aquí el enlace del grupo de WhatsApp.
+                <p className="bs-whatsapp-hint">
+                  Te llevamos al grupo y copiamos un saludo para que lo compartas ahí.
                 </p>
               )}
             </div>
