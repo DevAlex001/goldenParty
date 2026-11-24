@@ -756,3 +756,22 @@
     transition: none;
   }
 }
+
+.cross-page-link {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: inherit;
+  text-decoration: none;
+  font-size: 0.9rem;
+  backdrop-filter: blur(6px);
+}
+
+.cross-page-link:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
