@@ -48,18 +48,6 @@
   padding-top: 0.5rem;
 }
 
-.bs-cloud {
-  position: relative;
-  background: #fffaf3;
-  border: 3px dashed #c9b6e4;
-  border-radius: 40% 40% 45% 45% / 60% 60% 40% 40%;
-  padding: 1.1rem 2rem;
-  font-size: 1.9rem;
-  font-weight: 800;
-  color: #7a5a3a;
-  box-shadow: 0 10px 25px rgba(154, 112, 184, 0.18);
-}
-
 .bs-of {
   font-size: 1.1rem;
   font-weight: 700;
@@ -78,11 +66,18 @@
 }
 
 .bs-hero-img {
-  width: 180px;
-  height: 180px;
+  width: 100%;
+  max-width: 360px;
+  height: auto;
   object-fit: contain;
   border-radius: 28px;
   box-shadow: 0 12px 28px rgba(154, 112, 184, 0.25);
+}
+
+@media (min-width: 560px) {
+  .bs-hero-img {
+    max-width: 420px;
+  }
 }
 
 .bs-panel {
@@ -158,42 +153,12 @@
   line-height: 1.5;
 }
 
-.bs-rsvp-line,
-.bs-gift-line {
-  text-align: center;
-  margin: 0;
-  color: #6b5540;
-}
-
-.bs-cta {
-  align-self: center;
-  padding: 0.85rem 2rem;
-  border: none;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #caa6e8, #f0c9a0);
-  color: #4a3826;
-  font-weight: 800;
-  font-size: 1rem;
-  cursor: pointer;
-  box-shadow: 0 10px 24px rgba(154, 112, 184, 0.3);
-}
-
-.bs-cta:hover {
-  transform: translateY(-1px);
-}
-
-.bs-confirmed {
+.bs-whatsapp-block {
   text-align: center;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
   align-items: center;
-}
-
-.bs-confirmed-title {
-  margin: 0;
-  font-weight: 800;
-  color: #6b4f8a;
 }
 
 .bs-whatsapp-btn {

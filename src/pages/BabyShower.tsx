@@ -11,9 +11,6 @@ const EVENT_DATE = 'Sábado 12 de Diciembre'
 const EVENT_TIME = '4:00 pm'
 const EVENT_ADDRESS = 'Calle Guerrilleros Lanza, Edificio Tándem'
 const MAPS_URL = 'https://maps.app.goo.gl/U7tcp694SE4SiSfg9'
-const RSVP_CONTACT_NAME = 'Vania'
-const RSVP_PHONE = '74089404'
-const GIFT_SUGGESTION = 'Pañales talla 1 o lo que gustes'
 
 const WHATSAPP_GROUP_URL = 'https://chat.whatsapp.com/LUPmBQAiInaBdatmunQdyQ?s=cl&p=a&iam=2'
 
@@ -63,6 +60,24 @@ export default function BabyShower() {
   const [name, setName] = useState('')
   const [waCopied, setWaCopied] = useState(false)
 
+  async function joinWhatsapp(personName: string) {
+    try {
+      await navigator.clipboard.writeText(buildWhatsappGreeting(personName))
+      setWaCopied(true)
+    } catch {
+      setWaCopied(false)
+    }
+    window.open(WHATSAPP_GROUP_URL, '_blank', 'noopener,noreferrer')
+  }
+
+  function handleWhatsappClick() {
+    if (rsvp) {
+      void joinWhatsapp(rsvp.name)
+    } else {
+      setFormOpen(true)
+    }
+  }
+
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
     const trimmed = name.trim()
@@ -72,17 +87,7 @@ export default function BabyShower() {
     setRsvp(next)
     setFormOpen(false)
     setName('')
-  }
-
-  async function handleJoinWhatsapp() {
-    if (!rsvp) return
-    try {
-      await navigator.clipboard.writeText(buildWhatsappGreeting(rsvp.name))
-      setWaCopied(true)
-    } catch {
-      setWaCopied(false)
-    }
-    window.open(WHATSAPP_GROUP_URL, '_blank', 'noopener,noreferrer')
+    void joinWhatsapp(trimmed)
   }
 
   return (
@@ -95,7 +100,6 @@ export default function BabyShower() {
         </Link>
 
         <header className="bs-hero">
-          <div className="bs-cloud">Baby Shower</div>
           <img
             className="bs-hero-img"
             src={import.meta.env.BASE_URL + 'baby-shower-hero.png'}
@@ -137,34 +141,20 @@ export default function BabyShower() {
             </div>
           </div>
 
-          <p className="bs-rsvp-line">
-            Confirma tu asistencia con {RSVP_CONTACT_NAME} al {RSVP_PHONE}
-          </p>
-          <p className="bs-gift-line">Sugerencia de regalo: {GIFT_SUGGESTION}</p>
-
-          {rsvp ? (
-            <div className="bs-confirmed">
-              <p className="bs-confirmed-title">
-                ¡Gracias por confirmar, {rsvp.name}! 💜
-              </p>
-              <button type="button" className="bs-whatsapp-btn" onClick={handleJoinWhatsapp}>
-                Únete al grupo de WhatsApp
-              </button>
-              {waCopied ? (
-                <p className="bs-whatsapp-hint">
-                  ¡Copiamos tu saludo! Pégalo en el grupo apenas entres 💬
-                </p>
-              ) : (
-                <p className="bs-whatsapp-hint">
-                  Te llevamos al grupo y copiamos un saludo para que lo compartas ahí.
-                </p>
-              )}
-            </div>
-          ) : (
-            <button type="button" className="bs-cta" onClick={() => setFormOpen(true)}>
-              Confirmar asistencia
+          <div className="bs-whatsapp-block">
+            <button type="button" className="bs-whatsapp-btn" onClick={handleWhatsappClick}>
+              Únete al grupo de WhatsApp
             </button>
-          )}
+            {waCopied ? (
+              <p className="bs-whatsapp-hint">
+                ¡Copiamos tu saludo! Pégalo en el grupo apenas entres 💬
+              </p>
+            ) : (
+              <p className="bs-whatsapp-hint">
+                Te pediremos tu nombre y te llevamos directo al grupo.
+              </p>
+            )}
+          </div>
         </section>
       </div>
 
@@ -185,7 +175,7 @@ export default function BabyShower() {
             >
               ×
             </button>
-            <h2 id="bs-rsvp-heading">Confirmar asistencia</h2>
+            <h2 id="bs-rsvp-heading">¿Cuál es tu nombre?</h2>
             <form className="bs-form" onSubmit={handleSubmit}>
               <label className="bs-field">
                 <span>Nombre completo</span>
@@ -202,7 +192,7 @@ export default function BabyShower() {
                 />
               </label>
               <button className="bs-submit" type="submit">
-                Confirmar
+                Unirme al grupo
               </button>
             </form>
           </div>
