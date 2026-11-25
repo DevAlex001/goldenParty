@@ -3,8 +3,6 @@ import type { FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import './BabyShower.css'
 
-const STORAGE_KEY = 'baby-shower:rsvp'
-
 const MOM_NAME = 'Vania'
 const DAD_NAME = 'Alex'
 const EVENT_DATE = 'Sábado 12 de Diciembre'
@@ -58,27 +56,6 @@ async function postRsvpName(trimmedName: string) {
   }
 }
 
-type Rsvp = {
-  name: string
-  confirmedAt: number
-}
-
-function loadRsvp(): Rsvp | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return null
-    const parsed = JSON.parse(raw) as unknown
-    if (typeof parsed !== 'object' || parsed === null) return null
-    const o = parsed as Record<string, unknown>
-    const name = typeof o.name === 'string' ? o.name : null
-    const confirmedAt = typeof o.confirmedAt === 'number' ? o.confirmedAt : null
-    if (!name || confirmedAt === null) return null
-    return { name, confirmedAt }
-  } catch {
-    return null
-  }
-}
-
 function FloatingDecor() {
   return (
     <div className="bs-decor" aria-hidden>
@@ -95,7 +72,6 @@ function FloatingDecor() {
 }
 
 export default function BabyShower() {
-  const [rsvp, setRsvp] = useState<Rsvp | null>(() => loadRsvp())
   const [formOpen, setFormOpen] = useState(false)
   const [name, setName] = useState('')
   const [waCopied, setWaCopied] = useState(false)
@@ -110,14 +86,6 @@ export default function BabyShower() {
       setWaCopied(false)
     }
     window.open(WHATSAPP_GROUP_URL, '_blank', 'noopener,noreferrer')
-  }
-
-  function handleWhatsappClick() {
-    if (rsvp) {
-      void joinWhatsapp(rsvp.name)
-    } else {
-      setFormOpen(true)
-    }
   }
 
   function handleCancel() {
@@ -144,9 +112,6 @@ export default function BabyShower() {
       return
     }
 
-    const next: Rsvp = { name: trimmed, confirmedAt: Date.now() }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
-    setRsvp(next)
     setSubmitting(false)
     setFormOpen(false)
     setName('')
@@ -205,7 +170,7 @@ export default function BabyShower() {
           </div>
 
           <div className="bs-whatsapp-block">
-            <button type="button" className="bs-whatsapp-btn" onClick={handleWhatsappClick}>
+            <button type="button" className="bs-whatsapp-btn" onClick={() => setFormOpen(true)}>
               Únete al grupo de WhatsApp
             </button>
             {waCopied ? (
@@ -214,7 +179,7 @@ export default function BabyShower() {
               </p>
             ) : (
               <p className="bs-whatsapp-hint">
-                Te pediremos tu nombre y te llevamos directo al grupo.
+                Únete al grupo y confirma tu asistencia
               </p>
             )}
           </div>
