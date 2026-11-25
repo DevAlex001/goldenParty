@@ -9,6 +9,12 @@ permissions:
   pages: write
   id-token: write
 
+# Avoid two runs racing to deploy at once, which can leave a run's
+# artifact orphaned once a newer push takes over the Pages deployment.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
