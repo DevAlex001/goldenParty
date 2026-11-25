@@ -342,18 +342,51 @@
   font-size: 1rem;
 }
 
+.bs-form-error {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #b23a3a;
+  text-align: center;
+}
+
+.bs-form-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.bs-cancel,
 .bs-submit {
+  flex: 1;
   padding: 0.7rem;
-  border: none;
   border-radius: 999px;
-  background: #caa6e8;
-  color: #fff;
   font-weight: 700;
   cursor: pointer;
 }
 
+.bs-cancel {
+  border: 1px solid #caa6e8;
+  background: transparent;
+  color: #6b4f8a;
+}
+
+.bs-cancel:hover {
+  background: rgba(202, 166, 232, 0.15);
+}
+
+.bs-submit {
+  border: none;
+  background: #caa6e8;
+  color: #fff;
+}
+
 .bs-submit:hover {
   background: #b98ee0;
+}
+
+.bs-cancel:disabled,
+.bs-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 @media (prefers-reduced-motion: reduce) {

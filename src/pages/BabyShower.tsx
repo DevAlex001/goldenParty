@@ -14,8 +14,48 @@ const MAPS_URL = 'https://maps.app.goo.gl/U7tcp694SE4SiSfg9'
 
 const WHATSAPP_GROUP_URL = 'https://chat.whatsapp.com/LUPmBQAiInaBdatmunQdyQ?s=cl&p=a&iam=2'
 
+const DEFAULT_RSVP_URL = 'https://gwcex3cb5gzdsdltu6wn4bljeq0arotj.lambda-url.us-east-2.on.aws/'
+
+function normalizeApiBase(url: string) {
+  const t = url.trim()
+  return t.endsWith('/') ? t : `${t}/`
+}
+
+function resolveApiUrl(
+  envValue: string | undefined,
+  productionDefault: string,
+  devProxyPath: string,
+) {
+  if (typeof envValue === 'string' && envValue.trim().length > 0) {
+    return normalizeApiBase(envValue)
+  }
+  if (import.meta.env.DEV) return devProxyPath
+  return normalizeApiBase(productionDefault)
+}
+
+const RSVP_API_URL = resolveApiUrl(import.meta.env.VITE_RSVP_URL, DEFAULT_RSVP_URL, '/api/rsvp/')
+
 function buildWhatsappGreeting(name: string) {
   return `Hola chicos, soy ${name} y estaré presente en el Baby Shower 🎉`
+}
+
+async function postRsvpName(trimmedName: string) {
+  const res = await fetch(RSVP_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: trimmedName }),
+  })
+  const text = await res.text()
+  if (!res.ok) {
+    let message: string | null = null
+    try {
+      const data = text ? (JSON.parse(text) as { message?: string }) : null
+      message = typeof data?.message === 'string' ? data.message : null
+    } catch {
+      message = null
+    }
+    throw new Error(message || (text.trim().length > 0 ? text : `Request failed (${res.status})`))
+  }
 }
 
 type Rsvp = {
@@ -59,6 +99,8 @@ export default function BabyShower() {
   const [formOpen, setFormOpen] = useState(false)
   const [name, setName] = useState('')
   const [waCopied, setWaCopied] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   async function joinWhatsapp(personName: string) {
     try {
@@ -78,13 +120,34 @@ export default function BabyShower() {
     }
   }
 
-  function handleSubmit(e: FormEvent) {
+  function handleCancel() {
+    if (submitting) return
+    setFormOpen(false)
+    setSubmitError(null)
+    setName('')
+  }
+
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     const trimmed = name.trim()
     if (!trimmed) return
+
+    setSubmitting(true)
+    setSubmitError(null)
+
+    try {
+      await postRsvpName(trimmed)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'No pudimos registrar tu confirmación.'
+      setSubmitError(message)
+      setSubmitting(false)
+      return
+    }
+
     const next: Rsvp = { name: trimmed, confirmedAt: Date.now() }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
     setRsvp(next)
+    setSubmitting(false)
     setFormOpen(false)
     setName('')
     void joinWhatsapp(trimmed)
@@ -163,7 +226,7 @@ export default function BabyShower() {
           className="bs-modal-root"
           role="presentation"
           onClick={(e) => {
-            if (e.target === e.currentTarget) setFormOpen(false)
+            if (e.target === e.currentTarget) handleCancel()
           }}
         >
           <div className="bs-modal" role="dialog" aria-modal="true" aria-labelledby="bs-rsvp-heading">
@@ -171,7 +234,8 @@ export default function BabyShower() {
               type="button"
               className="bs-modal-close"
               aria-label="Cerrar"
-              onClick={() => setFormOpen(false)}
+              onClick={handleCancel}
+              disabled={submitting}
             >
               ×
             </button>
@@ -189,11 +253,23 @@ export default function BabyShower() {
                   maxLength={120}
                   required
                   autoFocus
+                  disabled={submitting}
                 />
               </label>
-              <button className="bs-submit" type="submit">
-                Unirme al grupo
-              </button>
+              {submitError ? <p className="bs-form-error">{submitError}</p> : null}
+              <div className="bs-form-actions">
+                <button
+                  type="button"
+                  className="bs-cancel"
+                  onClick={handleCancel}
+                  disabled={submitting}
+                >
+                  Cancelar
+                </button>
+                <button className="bs-submit" type="submit" disabled={submitting}>
+                  {submitting ? 'Enviando…' : 'Confirmar'}
+                </button>
+              </div>
             </form>
           </div>
         </div>
